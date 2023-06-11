@@ -41,8 +41,15 @@ export default function Home() {
   return (
     <main>
       <h1>Descripe your symptoms</h1>
-      <form className="form" onSubmit={handleSubmit}>
+      <form
+        className="form"
+        onSubmit={handleSubmit}
+        style={{ display: "flex" }}
+      >
         <input
+          style={{
+            width: "100%",
+          }}
           type="text"
           value={currentDescription}
           onChange={(e) => setCurrentDescription(e.target.value)}
