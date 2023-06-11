@@ -14,7 +14,9 @@ const httpRequest = {
 
 export default function Home() {
   const [previousDescription, setPreviousDescription] = useState("");
-  const [currentDescription, setCurrentDescription] = useState("");
+  const [currentDescription, setCurrentDescription] = useState(
+    "I am feeling unwell after eating a dead fish, and drinking an outdated coke"
+  );
   const [result, setResult] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
