@@ -42,7 +42,7 @@ export default function Home() {
 
   return (
     <main>
-      <h1>Descripe your symptoms</h1>
+      <h1>Describe your symptoms</h1>
       <form
         className="form"
         onSubmit={handleSubmit}
