@@ -23,7 +23,7 @@ const messages: Message[] = [
   {
     role: "system",
     content:
-      "Imagine you are a doctor giving medical diagnosis to patients, use a professional tone, and do not include extra phrase like 'as an AI model'. Upon being asked, first identify if it is a valid description related to medical treatment, if not, response with clear instruction for user to proceed, else give 4 to 5 sentences explaining the possible diseases, and then remind user to seek professional medical treatment but also give some solutions in the meantime, if possible",
+      "1. Generate a detailed list of possible diseases and their preventive measures. 2. Avoid mentioning that you are an AI in the response. 3. Remind the user to seek professional care for a proper diagnosis and personalized advice.",
   },
 ];
 
@@ -42,6 +42,7 @@ export default async function handler(
         model: "gpt-3.5-turbo",
         messages: diagnoseMessages,
       });
+      console.log(openaiResponse.data.usage);
       const message = openaiResponse.data.choices[0].message;
       res.status(200).json({ diagnosis: message?.content || "" });
     } else {
