@@ -1,69 +1,43 @@
-import { FormEvent, useState } from "react";
+"use client";
 
-const httpRequest = {
-  post: (url: string, body: any) => {
-    return fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
+import { useChat } from "ai/react";
+import { FormEvent } from "react";
+import { convertMdToHtml } from "~/utils/markdown";
+
+export default function Chat() {
+  const { messages, input, handleInputChange, handleSubmit, setMessages } =
+    useChat({
+      api: "/api/diagnose",
     });
-  },
-};
 
-export default function Home() {
-  const [previousDescription, setPreviousDescription] = useState("");
-  const [currentDescription, setCurrentDescription] = useState(
-    "I am feeling unwell after eating a dead fish, and drinking an outdated coke"
-  );
-  const [result, setResult] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!currentDescription) return;
-    setIsLoading(true);
-    const response = await httpRequest.post("/api/diagnose", {
-      description: currentDescription,
-    });
-    setIsLoading(false);
-    if (!response.ok) {
-      setErrorMessage("Something went wrong!");
-      return;
-    }
-    setPreviousDescription(currentDescription);
-    setCurrentDescription("");
-    setErrorMessage("");
-    const data = await response.json();
-    setResult(data.diagnosis);
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    setMessages([]);
+    handleSubmit(e);
   };
 
   return (
-    <main>
-      <h1>Describe your symptoms</h1>
-      <form
-        className="form"
-        onSubmit={handleSubmit}
-        style={{ display: "flex" }}
-      >
-        <input
-          style={{
-            width: "100%",
-          }}
-          type="text"
-          value={currentDescription}
-          onChange={(e) => setCurrentDescription(e.target.value)}
-        />
-        <button type="submit">Diagnose</button>
+    <div>
+      {messages.map((m) => (
+        <div key={m.id}>
+          <div style={{ fontWeight: "bold" }}>{m.role}:</div>
+          <div
+            dangerouslySetInnerHTML={{ __html: convertMdToHtml(m.content) }}
+          ></div>
+        </div>
+      ))}
+
+      <form onSubmit={onSubmit}>
+        <label style={{ width: "100%" }}>
+          <div style={{ fontWeight: "bold", marginBottom: "1rem" }}>
+            Describe your symptoms
+          </div>
+          <input
+            style={{ width: "100%" }}
+            value={input}
+            onChange={handleInputChange}
+          />
+        </label>
       </form>
-      {isLoading && <p>Loading...</p>}
-      <h2>Description</h2>
-      {previousDescription && <p>{previousDescription}</p>}
-      <h2>Diagnosis</h2>
-      {result && <p>{result}</p>}
-      {errorMessage && <p>{errorMessage}</p>}
-    </main>
+    </div>
   );
 }
